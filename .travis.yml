@@ -50,9 +50,12 @@ script:
   - ./configure $CONF
   # starts swapping with only 8GB. seperate the biggest
   - if [ -n "$ASAN" ]; then
-      travis_wait make -C src decode.lo ;
       travis_wait make -C src encode.lo ;
-      travis_wait make -j4 ;
+      travis_wait make -C src decode.lo ;
+      travis_wait make -C src out_json.lo ;
+      travis_wait make -C src out_dxfb.lo ;
+      travis_wait 25 make -C src ;
+      travis_wait 25 make ;
     else
       make -j4 ;
     fi
@@ -61,7 +64,7 @@ script:
       travis_wait make -j4 distcheck && sha256sum libredwg-*.tar.* ;
     else
       if [ -n "$ASAN" ]; then
-        travis_wait 20 make -j4 check -C src;
+        travis_wait 30 make -j4 check -C src;
       else
         make -j4 check ;
       fi
